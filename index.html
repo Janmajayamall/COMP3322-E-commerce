@@ -7,7 +7,8 @@
 <link rel = "stylesheet"
     type = "text/css"
     href = "style.css" /></head>
-<body>
+<body
+    onload="loadCategories()">
 <header>
   <h2>Easy Shop</h2>
   <div
@@ -33,98 +34,30 @@
   </nav>
   
   <article>
-    <table style="width:100%">
-        <tr>
-            <td>
-                <img id="shopping-cart-icon" src="./assests/shopping-cart.jpg" alt="Shopping Cart">
-            </td>
-            <td>
-                <table>
-                <tr>
-                    <p>
-                        item name
-                    </p>
-                </tr>
-                <tr>
-                    <p>
-                        item price
-                    </p>
-                </tr>
-                <tr>
-                    <p>
-                        item description
-                    </p>
-                </tr>
-                <tr>
-                    <p>
-                        Add to Cart
-                    </p>
-                </tr>
-            </table>
-            </td>
-        </tr>
-        <tr>
-                <td>
-                    <img id="shopping-cart-icon" src="./assests/shopping-cart.jpg" alt="Shopping Cart">
-                </td>
-                <td>
-                    <table>
-                    <tr>
-                        <p>
-                            item name
-                        </p>
-                    </tr>
-                    <tr>
-                        <p>
-                            item price
-                        </p>
-                    </tr>
-                    <tr>
-                        <p>
-                            item description
-                        </p>
-                    </tr>
-                    <tr>
-                        <p>
-                            Add to Cart
-                        </p>
-                    </tr>
-                </table>
-                </td>
-            </tr>
-            <tr>
-                    <td>
-                        <img id="shopping-cart-icon" src="./assests/shopping-cart.jpg" alt="Shopping Cart">
-                    </td>
-                    <td>
-                        <table>
-                        <tr>
-                            <p>
-                                item name
-                            </p>
-                        </tr>
-                        <tr>
-                            <p>
-                                item price
-                            </p>
-                        </tr>
-                        <tr>
-                            <p>
-                                item description
-                            </p>
-                        </tr>
-                        <tr>
-                            <p>
-                                Add to Cart
-                            </p>
-                        </tr>
-                    </table>
-                    </td>
-                </tr>
+    <table id="productDisplay" style="width:100%">
+        
     </table>
   </article>
 </section>
+<script>
+    function loadCategories(){
+        var xmlhttp;
+        if (window.XMLHttpRequest){
+            xmlhttp = new XMLHttpRequest;
+        }else {
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange = function(){	
+            if (xmlhttp.readyState == 4  && xmlhttp.status ==200){
+                var productDisplay  = document.getElementById("productDisplay");
+            productDisplay.innerHTML = xmlhttp.responseText;
+        }}
+        xmlhttp.open("GET","handleCategoryDisplay.php?show=all", true);
+        xmlhttp.send();
 
+
+    }
+</script>
 </body>
 </html>
 
