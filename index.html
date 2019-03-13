@@ -1,6 +1,271 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script src="jquery-3.3.1.js"></script>
+<script>
+  //loading all the categories in the left pane of the website
+  function loadCategories(){
+    var returnHtml = '';
+    $.get("handleCategoryDisplay.php", function(data){
+        var newData = JSON.parse(data);
+        var htmlString = '';
+        $.each( newData, function(key, val){
+          htmlString +=
+            `<li onclick="loadCategoryFirstPage(this.innerText)">${val}</li>`
+        })
+        $('#categoryList').html(htmlString);
+        loadInitialPage();
+    })
+  }  
+  //loading the first page of the first category
+  function loadInitialPage() {
+    var firstCategory = document.getElementById('categoryList').childNodes[0].innerText
+        $.get(`handleItemDisplay.php?category=${firstCategory}&page=1`, function(data){      
+            var newData = JSON.parse(data);
+            console.log(newData)
+            var htmlstring = `<a name="${firstCategory}"></a>`;
+            $.each(newData[0].item_array, function(key, val){
+                console.log(val)
+                htmlstring += 
+                `<tr id="${firstCategory}">
+                        <td>
+                            <img id=\"shopping-cart-icon\" src=\"${val.itemImage}\" alt=\"Shopping Cart\">
+                        </td>
+                        <td>
+                            <table>
+                            <tr>
+                                <p>
+                                    ${val.itemName}
+                                </p>
+                            </tr>
+                            <tr>
+                                <p>
+                                    ${val.itemPrice}
+                                </p>
+                            </tr>
+                            <tr>
+                                <p>
+                                    ${val.itemDescription}
+                                </p>
+                            </tr>
+                            <tr>
+                                <p>
+                                    Add to Cart
+                                </p>
+                            </tr>
+                        </table>
+                        </td>
+                </tr>`;
+            });
+            console.log(htmlstring)
+            $('#productDisplay').html(htmlstring);
+            var paginationHTML =   
+                `<a href="#" onclick="loadPreviousPage()">< Previous Page</a>
+                <input id="pageNumber" onchange="loadSpecifiedPage(this.value)" type="number" name="quantity" min="1" max="${newData[0].page_count}" value="1">
+                <a href="#" onclick="loadNextPage()">Next Page ></a>`;
+            $('#pageManipulation').html(paginationHTML);
+
+
+    })
+  }
+  //loading the first page of the category clicked on the left pane
+  function loadCategoryFirstPage(categoryName) {
+    $.get(`handleItemDisplay.php?category=${categoryName}&page=1`, function(data){      
+            var newData = JSON.parse(data);
+            console.log(newData)
+            var htmlstring = `<a name="${categoryName}"/>`;
+            $.each(newData[0].item_array, function(key, val){
+                console.log(val)
+                htmlstring += 
+                `<tr id="${categoryName}">
+                        <td>
+                            <img id=\"shopping-cart-icon\" src=\"${val.itemImage}\" alt=\"Shopping Cart\">
+                        </td>
+                        <td>
+                            <table>
+                            <tr>
+                                <p>
+                                    ${val.itemName}
+                                </p>
+                            </tr>
+                            <tr>
+                                <p>
+                                    ${val.itemPrice}
+                                </p>
+                            </tr>
+                            <tr>
+                                <p>
+                                    ${val.itemDescription}
+                                </p>
+                            </tr>
+                            <tr>
+                                <p>
+                                    Add to Cart
+                                </p>
+                            </tr>
+                        </table>
+                        </td>
+                    </tr>`;
+            });
+            $('#productDisplay').html(htmlstring);
+            document.getElementById('pageNumber').max= (newData[0].page_count).toString();
+            document.getElementById('pageNumber').value = '1';
+
+    })
+  }
+
+  //loading the next page for a category
+  function loadNextPage(){
+    var currentPage = parseInt(document.getElementById('pageNumber').value);
+    var maxPage = parseInt(document.getElementById('pageNumber').max);
+    if (currentPage + 1 <= maxPage){
+        var categoryName = document.getElementById('productDisplay').childNodes[0].id
+        $.get(`handleItemDisplay.php?category=${categoryName}&page=${currentPage + 1}`, function(data){      
+            var newData = JSON.parse(data);
+            console.log(newData)
+            var htmlstring = `<a name="${categoryName}"/>`;
+            $.each(newData[0].item_array, function(key, val){
+                console.log(val)
+                htmlstring += 
+                `<tr id="${categoryName}">
+                        <td>
+                            <img id=\"shopping-cart-icon\" src=\"${val.itemImage}\" alt=\"Shopping Cart\">
+                        </td>
+                        <td>
+                            <table>
+                            <tr>
+                                <p>
+                                    ${val.itemName}
+                                </p>
+                            </tr>
+                            <tr>
+                                <p>
+                                    ${val.itemPrice}
+                                </p>
+                            </tr>
+                            <tr>
+                                <p>
+                                    ${val.itemDescription}
+                                </p>
+                            </tr>
+                            <tr>
+                                <p>
+                                    Add to Cart
+                                </p>
+                            </tr>
+                        </table>
+                        </td>
+                    </tr>`;
+            });
+            $('#productDisplay').html(htmlstring);
+            document.getElementById('pageNumber').max= (newData[0].page_count).toString();
+            document.getElementById('pageNumber').value = (currentPage + 1).toString();
+    })
+    } 
+  }
+
+  //loading the previous page for a category
+  function loadPreviousPage(){
+    var currentPage = parseInt(document.getElementById('pageNumber').value);
+    if (currentPage - 1 > 0){
+        var categoryName = document.getElementById('productDisplay').childNodes[0].id
+        $.get(`handleItemDisplay.php?category=${categoryName}&page=${currentPage - 1}`, function(data){      
+            var newData = JSON.parse(data);
+            console.log(newData)
+            var htmlstring = `<a name="${categoryName}"/>`;
+            $.each(newData[0].item_array, function(key, val){
+                console.log(val)
+                htmlstring += 
+                `<tr id="${categoryName}">
+                        <td>
+                            <img id=\"shopping-cart-icon\" src=\"${val.itemImage}\" alt=\"Shopping Cart\">
+                        </td>
+                        <td>
+                            <table>
+                            <tr>
+                                <p>
+                                    ${val.itemName}
+                                </p>
+                            </tr>
+                            <tr>
+                                <p>
+                                    ${val.itemPrice}
+                                </p>
+                            </tr>
+                            <tr>
+                                <p>
+                                    ${val.itemDescription}
+                                </p>
+                            </tr>
+                            <tr>
+                                <p>
+                                    Add to Cart
+                                </p>
+                            </tr>
+                        </table>
+                        </td>
+                    </tr>`;
+            });
+            $('#productDisplay').html(htmlstring);
+            document.getElementById('pageNumber').max= (newData[0].page_count).toString();
+            document.getElementById('pageNumber').value = (currentPage - 1).toString();
+    })
+    } 
+  }
+
+   //loading the previous page for a category
+   function loadSpecifiedPage(pageNum){
+    var page = pageNum.toString();
+    var maxPage = parseInt(document.getElementById('pageNumber').max);
+
+    if (page > 0 && page <= maxPage){
+        var categoryName = document.getElementById('productDisplay').childNodes[0].id
+        $.get(`handleItemDisplay.php?category=${categoryName}&page=${page}`, function(data){      
+            var newData = JSON.parse(data);
+            console.log(newData)
+            var htmlstring = `<a name="${categoryName}"/>`;
+            $.each(newData[0].item_array, function(key, val){
+                console.log(val)
+                htmlstring += 
+                `<tr id="${categoryName}">
+                        <td>
+                            <img id=\"shopping-cart-icon\" src=\"${val.itemImage}\" alt=\"Shopping Cart\">
+                        </td>
+                        <td>
+                            <table>
+                            <tr>
+                                <p>
+                                    ${val.itemName}
+                                </p>
+                            </tr>
+                            <tr>
+                                <p>
+                                    ${val.itemPrice}
+                                </p>
+                            </tr>
+                            <tr>
+                                <p>
+                                    ${val.itemDescription}
+                                </p>
+                            </tr>
+                            <tr>
+                                <p>
+                                    Add to Cart
+                                </p>
+                            </tr>
+                        </table>
+                        </td>
+                    </tr>`;
+            });
+            $('#productDisplay').html(htmlstring);
+            document.getElementById('pageNumber').max= (newData[0].page_count).toString();
+            document.getElementById('pageNumber').value = (page).toString();
+    })
+    } 
+  }
+
+  
+</script>
 <title>CSS Template</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,7 +273,7 @@
     type = "text/css"
     href = "style.css" /></head>
 <body
-    onload="loadCategories()">
+    onload="loadCategories();">
 <header>
   <h2>Easy Shop</h2>
   <div
@@ -26,38 +291,20 @@
 
 <section>
   <nav>
-    <ul>
-      <li><a href="#">Category 1</a></li>
-      <li><a href="#">Category 2</a></li>
-      <li><a href="#">Category 3</a></li>
+    <ul id="categoryList">
     </ul>
   </nav>
   
-  <article>
-    <table id="productDisplay" style="width:100%">
-        
-    </table>
+  <article >
+    <div >   
+        <table id="productDisplay" style="width:100%">
+        </table>
+    </div> 
+    <div id="pageManipulation">
+       
+    </div>    
   </article>
 </section>
-<script>
-    function loadCategories(){
-        var xmlhttp;
-        if (window.XMLHttpRequest){
-            xmlhttp = new XMLHttpRequest;
-        }else {
-            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlhttp.onreadystatechange = function(){	
-            if (xmlhttp.readyState == 4  && xmlhttp.status ==200){
-                var productDisplay  = document.getElementById("productDisplay");
-            productDisplay.innerHTML = xmlhttp.responseText;
-        }}
-        xmlhttp.open("GET","handleCategoryDisplay.php?show=all", true);
-        xmlhttp.send();
-
-
-    }
-</script>
 </body>
 </html>
 
