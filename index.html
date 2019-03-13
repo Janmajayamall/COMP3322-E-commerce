@@ -62,6 +62,7 @@
             var paginationHTML =   
                 `<a href="#" onclick="loadPreviousPage()">< Previous Page</a>
                 <input id="pageNumber" onchange="loadSpecifiedPage(this.value)" type="number" name="quantity" min="1" max="${newData[0].page_count}" value="1">
+                <p id="maxPage">of ${newData[0].page_count}</p>
                 <a href="#" onclick="loadNextPage()">Next Page ></a>`;
             $('#pageManipulation').html(paginationHTML);
 
@@ -160,6 +161,7 @@
             $('#productDisplay').html(htmlstring);
             document.getElementById('pageNumber').max= (newData[0].page_count).toString();
             document.getElementById('pageNumber').value = (currentPage + 1).toString();
+            document.getElementById('maxPage').childNodes[0].data = `of ${(newData[0].page_count).toString()}`;
     })
     } 
   }
@@ -209,6 +211,7 @@
             $('#productDisplay').html(htmlstring);
             document.getElementById('pageNumber').max= (newData[0].page_count).toString();
             document.getElementById('pageNumber').value = (currentPage - 1).toString();
+            document.getElementById('maxPage').childNodes[0].data = `of ${(newData[0].page_count).toString()}`;
     })
     } 
   }
@@ -260,6 +263,7 @@
             $('#productDisplay').html(htmlstring);
             document.getElementById('pageNumber').max= (newData[0].page_count).toString();
             document.getElementById('pageNumber').value = (page).toString();
+            document.getElementById('maxPage').childNodes[0].data = `of ${(newData[0].page_count).toString()}`;
     })
     } 
   }
