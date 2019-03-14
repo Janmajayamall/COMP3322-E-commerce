@@ -174,26 +174,84 @@
   function loadCartNumber(){
       $.get(`handleAddToCart.php`, function(data){
         var newData = JSON.parse(data);
+        console.log(newData);
+        console.log('erer')
         var totalItems = 0;
         for (var i= 0; i < newData.length; i++){
             totalItems += parseInt(newData[i].itemNumber);
         }
-        console.log(totalItems);
-        document.getElementById('itemsInCartPara').childNodes[0] = totalItems.toString();
+        console.log(totalItems)
+        document.getElementById('itemsInCartPara').innerText = totalItems.toString();
       });
   }
 
   //adding orders to the cart
   function addToCart(item){
     var itemID = item.parentNode.getElementsByTagName('p')[4].innerText;
-    $.get(`handleAddToCart.php?itemid=${itemID}&increaseby=1`, function(data){
+    $.get(`handleAddToCart.php?itemID=${itemID}&updateNumber=1`, function(data){
         var newData = JSON.parse(data);
         var totalItems = 0;
         for (var i= 0; i < newData.length; i++){
             totalItems += parseInt(newData[i].itemNumber);
         }
-        console.log(totalItems);
-        document.getElementById('itemsInCartPara').childNodes[0] = totalItems.toString();
+        document.getElementById('itemsInCartPara').innerText = totalItems.toString();
+      });
+  }
+
+    //displaying the shopping cart content
+    function loadCartContent() {
+        $.get(`handleCartContent.php`, function(data){
+            var newData = JSON.parse(data);
+            console.log(newData);
+            var htmlstring = '<table>'
+            $.each(newData, function(key, val){
+                htmlstring += 
+                `<tr>
+                        <td>
+                            <img id=\"shopping-cart-icon\" src=\"${val.itemImage}\" alt=\"Shopping Cart\">
+                        </td>
+                        <td>                               
+                            <p>${val.itemName}</p>                               
+                            <p>${val.itemDescription}</p>                          
+                        </td>
+                        <td>
+                            <p>${val.itemPrice}</p> 
+                        </td>
+                        <td>
+                            <input id="quantity" onchange="changeQuantity(this)" defaultValue="${val.itemQuantity}" type="number" name="quantity" min="0" value="${val.itemQuantity}">
+                            <p hidden>${val.itemID}</p>
+                        </td>
+                </tr>`
+                });
+            htmlstring += '</table>'
+            
+            //calculating the subtotal of the items
+            var subtotal = 0;
+            var quantity = 0;
+            for (let i = 0; i < newData.length; i++){
+                quantity += parseInt(newData[i].itemQuantity);
+                var totalVal = parseFloat(newData[i].itemPrice) * parseInt(newData[i].itemQuantity);
+                subtotal += totalVal;
+            }
+            htmlstring += 
+                `
+                    <div>
+                            <p>Cart subtotal (${quantity} item(s)): $${subtotal}</p>
+                    </div>
+                `
+            console.log(htmlstring)
+            $('#mainSection').html(htmlstring);
+            document.getElementById('itemsInCartPara').innerText = quantity.toString();
+
+
+      });
+  }
+
+  function changeQuantity(item) {
+        var itemID = item.parentNode.getElementsByTagName('p')[0].innerText;
+        var changeBy = parseInt(item.value) - parseInt(item.defaultValue);
+        $.get(`handleAddToCart.php?itemID=${itemID}&updateNumber=${changeBy}`, function(data){
+            loadCartContent();
       });
   }
 
@@ -213,7 +271,7 @@
     id="horizontal-div-header">
     <div
         class="col">
-        <img id="shopping-cart-icon" src="./assests/shopping-cart.jpg" alt="Shopping Cart">
+        <img onclick="loadCartContent()" id="shopping-cart-icon" src="./assests/shopping-cart.jpg" alt="Shopping Cart">
     </div>
     <div
         class="col">
@@ -223,20 +281,22 @@
 </header>
 
 <section>
-  <nav>
-    <ul id="categoryList">
-    </ul>
-  </nav>
-  
-  <article >
-    <div id="productDisplay">   
-        <table style="width:100%">
-        </table>
-    </div> 
-    <div id="pageManipulation">
-       
-    </div>    
-  </article>
+    <div id='mainSection'>
+        <nav>
+                <ul id="categoryList">
+                </ul>
+        </nav>
+                
+        <article >
+        <div id="productDisplay">   
+            <table style="width:100%">
+            </table>
+        </div> 
+        <div id="pageManipulation">
+            
+        </div>    
+        </article>
+    </div>
 </section>
 </body>
 </html>
