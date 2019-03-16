@@ -170,31 +170,18 @@
     } 
   }
 
-  //getting the cart number for the orders the user placed
+  //getting the cart number for the orders the user placed //change here for the count 
   function loadCartNumber(){
       $.get(`handleAddToCart.php`, function(data){
-        var newData = JSON.parse(data);
-        console.log(newData);
-        console.log('erer')
-        var totalItems = 0;
-        for (var i= 0; i < newData.length; i++){
-            totalItems += parseInt(newData[i].itemNumber);
-        }
-        console.log(totalItems)
-        document.getElementById('itemsInCartPara').innerText = totalItems.toString();
+        document.getElementById('itemsInCartPara').innerText = data;
       });
   }
 
-  //adding orders to the cart
+  //adding orders to the cart  //change here for the count
   function addToCart(item){
     var itemID = item.parentNode.getElementsByTagName('p')[4].innerText;
     $.get(`handleAddToCart.php?itemID=${itemID}&updateNumber=1`, function(data){
-        var newData = JSON.parse(data);
-        var totalItems = 0;
-        for (var i= 0; i < newData.length; i++){
-            totalItems += parseInt(newData[i].itemNumber);
-        }
-        document.getElementById('itemsInCartPara').innerText = totalItems.toString();
+        document.getElementById('itemsInCartPara').innerText = data;
       });
   }
 

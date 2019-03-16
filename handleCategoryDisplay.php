@@ -4,7 +4,7 @@
     //Select database
     mysqli_select_db($conn, 'jmall') or die('Error! '. mysqli_error($conn));
     //Construct your SQL query here 
-    $query = 'select distinct itemCategory from catalog;';
+    $query = 'select distinct itemCategory from catalog ORDER BY itemCategory ASC;';
     $result = mysqli_query($conn, $query) or die('Error! '. mysql_error($conn));
     $newArray = array();
     while($row = mysqli_fetch_array($result)) {
